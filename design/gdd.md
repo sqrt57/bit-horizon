@@ -2,7 +2,7 @@
 
 **GitHub Repository Description:** 🌌 A cross-platform incremental game utilizing cascading mathematical production loops and dark-terminal aesthetics. Infinite scaling, finite UI boundaries.
 **Package Structure:** `com.cosmic.bithorizon`
-**Target Platforms:** Android (Minimum SDK 26), iOS, Desktop (Windows/macOS/Linux)
+**Target Platforms:** Android (Minimum SDK 26), Desktop (Windows/macOS/Linux). iOS deferred indefinitely (no macOS/Xcode build environment available).
 **UI Framework:** Compose Multiplatform (Material 3)
 
 ---
