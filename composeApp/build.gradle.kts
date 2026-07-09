@@ -24,6 +24,9 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
         }
