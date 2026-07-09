@@ -1,9 +1,9 @@
 # Game Design Document: Project BitHorizon
 
-**GitHub Repository Description:** 🌌 An Android-native incremental game utilizing cascading mathematical production loops and dark-terminal aesthetics. Infinite scaling, finite UI boundaries.
+**GitHub Repository Description:** 🌌 A cross-platform incremental game utilizing cascading mathematical production loops and dark-terminal aesthetics. Infinite scaling, finite UI boundaries.
 **Package Structure:** `com.cosmic.bithorizon`
-**Target Platform:** Android (Minimum SDK 26)
-**UI Framework:** Jetpack Compose (Material 3)
+**Target Platforms:** Android (Minimum SDK 26), iOS, Desktop (Windows/macOS/Linux)
+**UI Framework:** Compose Multiplatform (Material 3)
 
 ---
 
