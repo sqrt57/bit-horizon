@@ -64,4 +64,42 @@ class GameStateTest {
         assertEquals(0, state.buy(Tier.TELEMETRY_SENSOR, Decimal.ZERO).dataBits.cmp(Decimal.fromInt(10)))
         assertEquals(0, state.buy(Tier.TELEMETRY_SENSOR, Decimal.fromInt(-1)).dataBits.cmp(Decimal.fromInt(10)))
     }
+
+    @Test
+    fun tickProducesDataBitsFromTelemetrySensors() {
+        val state = GameState(telemetrySensors = Decimal.fromInt(10))
+        val ticked = state.tick(deltaSeconds = 0.1)
+        // 10 sensors * 1.0/sec * (1 + 0 particles) * 0.1s = 1.0
+        assertEquals(0, ticked.dataBits.cmp(Decimal.ONE))
+        assertEquals(0, ticked.telemetrySensors.cmp(Decimal.fromInt(10)))
+    }
+
+    @Test
+    fun tickCascadesAllThreeTiersFromOneSnapshot() {
+        val state = GameState(
+            telemetrySensors = Decimal.fromInt(10),
+            subProbeArrays = Decimal.fromInt(20),
+            quantumRelays = Decimal.fromInt(30),
+        )
+        val ticked = state.tick(deltaSeconds = 0.1)
+        // Each tier's output uses the pre-tick count, not a value already bumped this tick.
+        assertEquals(0, ticked.dataBits.cmp(Decimal.fromDouble(1.0))) // 10 * 0.1
+        assertEquals(0, ticked.telemetrySensors.cmp(Decimal.fromDouble(12.0))) // 10 + 20 * 0.1
+        assertEquals(0, ticked.subProbeArrays.cmp(Decimal.fromDouble(23.0))) // 20 + 30 * 0.1
+        assertEquals(0, ticked.quantumRelays.cmp(Decimal.fromInt(30))) // nothing feeds Tier 3
+    }
+
+    @Test
+    fun tickAppliesTachyonEfficiencyBonusToAllChannels() {
+        val state = GameState(telemetrySensors = Decimal.fromInt(10), tachyonParticles = Decimal.fromInt(2))
+        val ticked = state.tick(deltaSeconds = 0.1)
+        // 10 sensors * 1.0/sec * (1 + 2 particles) * 0.1s = 3.0
+        assertEquals(0, ticked.dataBits.cmp(Decimal.fromDouble(3.0)))
+    }
+
+    @Test
+    fun tickWithNothingOwnedProducesNothing() {
+        val ticked = GameState().tick()
+        assertEquals(0, ticked.dataBits.cmp(Decimal.ZERO))
+    }
 }
