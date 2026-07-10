@@ -102,4 +102,52 @@ class GameStateTest {
         val ticked = GameState().tick()
         assertEquals(0, ticked.dataBits.cmp(Decimal.ZERO))
     }
+
+    @Test
+    fun canHorizonShiftIsFalseBelowThreshold() {
+        val state = GameState(dataBits = Decimal.fromInt(9_999))
+        assertEquals(false, state.canHorizonShift())
+    }
+
+    @Test
+    fun canHorizonShiftIsTrueAtThreshold() {
+        val state = GameState(dataBits = Decimal.fromInt(10_000))
+        assertEquals(true, state.canHorizonShift())
+    }
+
+    @Test
+    fun horizonShiftIsNoOpBelowThreshold() {
+        val state = GameState(
+            dataBits = Decimal.fromInt(9_999),
+            telemetrySensors = Decimal.fromInt(5),
+            tachyonParticles = Decimal.fromInt(1),
+        )
+        val shifted = state.horizonShift()
+        assertEquals(0, shifted.dataBits.cmp(Decimal.fromInt(9_999)))
+        assertEquals(0, shifted.telemetrySensors.cmp(Decimal.fromInt(5)))
+        assertEquals(0, shifted.tachyonParticles.cmp(Decimal.ONE))
+    }
+
+    @Test
+    fun horizonShiftWipesResourcesAndGrantsOneTachyonParticle() {
+        val state = GameState(
+            dataBits = Decimal.fromInt(15_000),
+            telemetrySensors = Decimal.fromInt(50),
+            subProbeArrays = Decimal.fromInt(20),
+            quantumRelays = Decimal.fromInt(3),
+        )
+        val shifted = state.horizonShift()
+        assertEquals(0, shifted.dataBits.cmp(Decimal.ZERO))
+        assertEquals(0, shifted.telemetrySensors.cmp(Decimal.ZERO))
+        assertEquals(0, shifted.subProbeArrays.cmp(Decimal.ZERO))
+        assertEquals(0, shifted.quantumRelays.cmp(Decimal.ZERO))
+        assertEquals(0, shifted.tachyonParticles.cmp(Decimal.ONE))
+    }
+
+    @Test
+    fun horizonShiftAccumulatesTachyonParticlesAcrossRuns() {
+        val state = GameState(dataBits = Decimal.fromInt(10_000), tachyonParticles = Decimal.fromInt(4))
+        val shifted = state.horizonShift()
+        assertEquals(0, shifted.tachyonParticles.cmp(Decimal.fromInt(5)))
+    }
 }

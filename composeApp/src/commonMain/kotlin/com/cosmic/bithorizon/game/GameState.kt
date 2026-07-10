@@ -32,6 +32,9 @@ enum class Tier(val config: TierConfig) {
 /** Delta-ticker interval per the GDD: calculations process 10 times a second. */
 const val TICK_DELTA_SECONDS: Double = 0.1
 
+/** Horizon Shift (prestige) unlocks once Data Bits reach this threshold, per the GDD. */
+val HORIZON_SHIFT_THRESHOLD: Decimal = Decimal.fromInt(10_000)
+
 /**
  * Current save state: Data Bits, the three infrastructure tier counts, and Tachyon
  * Particles accumulated from past Horizon Shifts.
@@ -107,6 +110,25 @@ data class GameState(
             dataBits = dataBits.add(telemetrySensorOutput),
             telemetrySensors = telemetrySensors.add(subProbeArrayOutput),
             subProbeArrays = subProbeArrays.add(quantumRelayOutput),
+        )
+    }
+
+    /** True once Data Bits have reached [HORIZON_SHIFT_THRESHOLD] and a Horizon Shift is available. */
+    fun canHorizonShift(): Boolean = dataBits.gte(HORIZON_SHIFT_THRESHOLD)
+
+    /**
+     * Performs a Horizon Shift: wipes Data Bits and all three infrastructure tiers, and
+     * grants +1 Tachyon Particle — a permanent efficiency bonus applied every subsequent
+     * [tick]. No-ops (returns this state unchanged) if [canHorizonShift] is false.
+     */
+    fun horizonShift(): GameState {
+        if (!canHorizonShift()) return this
+        return copy(
+            dataBits = Decimal.ZERO,
+            telemetrySensors = Decimal.ZERO,
+            subProbeArrays = Decimal.ZERO,
+            quantumRelays = Decimal.ZERO,
+            tachyonParticles = tachyonParticles.add(Decimal.ONE),
         )
     }
 }
