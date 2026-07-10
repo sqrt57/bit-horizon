@@ -36,6 +36,13 @@ const val TICK_DELTA_SECONDS: Double = 0.1
 val HORIZON_SHIFT_THRESHOLD: Decimal = Decimal.fromInt(10_000)
 
 /**
+ * Data Bits granted per Executive Core "Manual Scan" tap. Not specified by the GDD
+ * (see design/backlog.md); +1.0 matches the "+1.0" base-output convention used for
+ * every tier's passive production, pending a real balance pass.
+ */
+val MANUAL_SCAN_YIELD: Decimal = Decimal.ONE
+
+/**
  * Current save state: Data Bits, the three infrastructure tier counts, and Tachyon
  * Particles accumulated from past Horizon Shifts.
  */
@@ -112,6 +119,13 @@ data class GameState(
             subProbeArrays = subProbeArrays.add(quantumRelayOutput),
         )
     }
+
+    /** Total Data Bits/sec at the current tier counts, per the GDD's Prestige Modifier formula. */
+    fun dataBitsPerSecond(): Decimal =
+        telemetrySensors.mul(Tier.TELEMETRY_SENSOR.config.baseOutputPerSecond).mul(Decimal.ONE.add(tachyonParticles))
+
+    /** Grants [MANUAL_SCAN_YIELD] Data Bits directly, bypassing tier production. */
+    fun manualScan(): GameState = copy(dataBits = dataBits.add(MANUAL_SCAN_YIELD))
 
     /** True once Data Bits have reached [HORIZON_SHIFT_THRESHOLD] and a Horizon Shift is available. */
     fun canHorizonShift(): Boolean = dataBits.gte(HORIZON_SHIFT_THRESHOLD)

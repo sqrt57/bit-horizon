@@ -150,4 +150,18 @@ class GameStateTest {
         val shifted = state.horizonShift()
         assertEquals(0, shifted.tachyonParticles.cmp(Decimal.fromInt(5)))
     }
+
+    @Test
+    fun dataBitsPerSecondReflectsTelemetrySensorsAndTachyonBonus() {
+        val state = GameState(telemetrySensors = Decimal.fromInt(10), tachyonParticles = Decimal.fromInt(1))
+        // 10 sensors * 1.0/sec * (1 + 1 particle) = 20
+        assertEquals(0, state.dataBitsPerSecond().cmp(Decimal.fromInt(20)))
+    }
+
+    @Test
+    fun manualScanAddsFlatYieldToDataBits() {
+        val state = GameState(dataBits = Decimal.fromInt(5))
+        val scanned = state.manualScan()
+        assertEquals(0, scanned.dataBits.cmp(Decimal.fromInt(5).add(MANUAL_SCAN_YIELD)))
+    }
 }
