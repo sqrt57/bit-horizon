@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-BitHorizon is a cross-platform incremental (idle) game: cascading mathematical production loops with a dark-terminal UI aesthetic. Full design spec lives in `design/gdd.md` (core loop, math engine, prestige mechanics, UI layout); open questions and pending decisions are tracked in `design/backlog.md` — check both before making product/architecture decisions, since resolved-decision rationale (e.g. why break_infinity.js over BigDecimal, why DataStore over SQLDelight) lives there and shouldn't be re-litigated.
+BitHorizon is a cross-platform incremental (idle) game: cascading mathematical production loops with a dark-terminal UI aesthetic. Full design spec lives in `design/gdd.md` (core loop, math engine, prestige mechanics, UI layout); open questions and pending tasks are tracked in `design/backlog.md`; resolved-decision rationale (e.g. why break_infinity.js over BigDecimal, why DataStore over SQLDelight) lives in `design/changelog.md` — check all three before making product/architecture decisions, since that rationale shouldn't be re-litigated.
 
 - Package: `com.cosmic.bithorizon`
 - Targets: Android (minSdk 26) and Desktop (Windows/macOS/Linux). iOS is deferred indefinitely — no macOS/Xcode build environment available; the KMP module structure keeps an `iosMain` source set addable later.
