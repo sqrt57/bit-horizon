@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cosmic.bithorizon.game.GameState
@@ -86,7 +88,7 @@ fun App() {
 
     MaterialTheme {
         Column(
-            modifier = Modifier.fillMaxSize().background(TerminalBackground).padding(16.dp),
+            modifier = Modifier.fillMaxSize().background(TerminalBackground).safeDrawingPadding().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             TelemetryMetricsZone(state)
@@ -154,21 +156,25 @@ private fun TierRow(state: GameState, tier: Tier, onBuyMax: () -> Unit) {
     val affordable = state.maxAffordable(tier).gt(Decimal.ZERO)
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = tierLabel(tier),
                 color = Color.White,
                 fontFamily = TerminalMono,
                 fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = "Owned: ${state.count(tier)}  ·  Next: ${state.costForNext(tier)} ${paymentUnitLabel(tier)}",
                 color = TerminalDim,
                 fontFamily = TerminalMono,
                 fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
         Button(
